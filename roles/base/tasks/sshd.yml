@@ -1,0 +1,14 @@
+---
+- name: Prevent ssh login with passwords
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^PasswordAuthentication
+    line: PasswordAuthentication no
+    state: present
+
+- name: Prevent ssh root login
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^PermitRootLogin
+    line: PermitRootLogin no
+    state: present

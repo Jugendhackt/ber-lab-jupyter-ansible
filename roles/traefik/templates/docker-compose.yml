@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  traefik:
+    image: traefik:v2.9
+    command:
+      # entrypoints
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+
+      # increase timeout for requests to upstream servers
+      - --serversTransport.forwardingTimeouts.dialTimeout=150s
+
+      # config
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=traefik_web
+      - --api=true
+      - --ping.manualrouting=true
+      - --metrics.prometheus=true
+      - --log.level=WARN
+
+      # letsencrypt/acme
+      - --certificatesResolvers.letsencrypt.acme.email=letsencrypt@lukasgueldenstein.de
+      - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
+
+      # tls
+      - --providers.file.directory=/configs
+
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    networks:
+      - web
+    volumes:
+      - "{{ store_dir.path }}/acme.json:/acme.json"
+      - "{{ docker_dir.path }}/certs:/certs"
+      - "{{ treafik_config_dir.path }}:/configs"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    labels:
+      traefik.enable: true
+      # redirect all http to https
+      traefik.http.routers.http_catchall.rule: HostRegexp(`{any:.+}`)
+      traefik.http.routers.http_catchall.entrypoints: http
+      traefik.http.routers.http_catchall.middlewares: https_redirect
+      traefik.http.middlewares.https_redirect.redirectscheme.scheme: https
+      traefik.http.middlewares.https_redirect.redirectscheme.permanent: true
+
+networks:
+  web:
+    driver: bridge
+  monitoring:
+    external: true

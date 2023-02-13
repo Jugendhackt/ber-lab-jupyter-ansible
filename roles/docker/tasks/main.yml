@@ -1,0 +1,55 @@
+---
+- name: Debug message
+  ansible.builtin.debug:
+    msg: "{{ [ansible_architecture] | map('extract', deb_architecture) | first }}"
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg
+
+# like example add docker repo
+- name: Add Docker APT repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch={{ [ansible_architecture] | map('extract', deb_architecture) | first }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+- name: Install Packages
+  apt:
+    update_cache: yes
+    state: present
+    pkg:
+      - docker-ce
+      - python3-pip
+      - python3-setuptools
+      - python3-dev
+
+- name: Install python packages
+  pip:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - wheel
+    - docker
+    - docker-compose
+
+- name: Render daemon.json
+  template:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
+- name: adding existing user '{{ ansible_user }}' to group docker
+  user:
+    name: '{{ ansible_user }}'
+    groups: docker
+    append: yes
+
+- name: Start docker and make sure docker is not autostarted
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: started
+  loop:
+    - docker.service
+    - docker.socket
+  tags: boot
+
+

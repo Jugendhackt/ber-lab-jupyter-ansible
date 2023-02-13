@@ -1,0 +1,10 @@
+---
+- hosts: servers
+  become: true
+  strategy: free
+  roles:
+    - { role: load_secrets, tags: [always] }
+    - { role: base, tags: [base] }
+    - { role: docker, tags: [docker] }    
+    - { role: traefik, tags: [traefik] }
+    - { role: jupyter, tags: [jupyter] }

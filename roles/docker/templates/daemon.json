@@ -1,0 +1,9 @@
+{
+  "ipv6": false,
+  "bridge": "",
+  "log-opts": {
+    "max-size": "50m",
+    "max-file": "2"
+  },
+  "experimental": true
+}

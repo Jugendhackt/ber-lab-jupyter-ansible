@@ -1,0 +1,15 @@
+---
+- name: Ensure ufw is disabled
+  community.general.ufw:
+    state: disabled
+
+- name: "Make sure there is no ipv4 rules"
+  file:    
+    dest: "/etc/iptables/rules.v4"
+    state: absent
+
+- name: "Render iptables rules for ipv6"
+  template:
+    src: rules.ip6
+    dest: "/etc/iptables/rules.v6"
+    mode: 0644

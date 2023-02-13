@@ -1,0 +1,50 @@
+---
+- name: Install Packages
+  apt:
+    state: present
+    install_recommends: no
+    pkg:
+      - python3-setuptools
+
+- name: Create docker dir
+  file:
+    path: "{{ docker_compose_root }}/traefik"
+    state: directory
+  register: docker_dir
+
+- name: Create traefik config dir
+  file:
+    path: "{{ docker_dir.path }}/config"
+    state: directory
+  register: treafik_config_dir
+
+- name: Create store dir (for acme state)
+  file:
+    path: "{{ storage_root }}/traefik"
+    state: directory
+  register: store_dir
+
+- name: Render docker-compose
+  template:
+    src: ../templates/docker-compose.yml
+    dest: "{{ docker_dir.path }}/docker-compose.yml"
+  register: render
+
+- name: Create cert dir
+  file:
+    path: "{{ docker_dir.path }}/certs"
+    state: directory
+
+- name: Touch acme file
+  copy:
+    content: ""
+    dest: "{{ store_dir.path }}/acme.json"
+    mode: 0600
+    force: no
+
+- name: start docker service
+  community.docker.docker_compose:
+    project_src: "{{ docker_dir.path }}"
+    pull: yes
+    restarted: "{{ render is defined and render.changed }}"
+  tags: update
