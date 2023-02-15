@@ -50,5 +50,3 @@ services:
 networks:
   web:
     driver: bridge
-  monitoring:
-    external: true
