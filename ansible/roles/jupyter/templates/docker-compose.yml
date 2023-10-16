@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  scipy-notebook:
+    image: jupyter/scipy-notebook:latest
+    command:
+      - jupyter
+      - notebook
+      - --NotebookApp.allow_password_change=False
+      - --NotebookApp.password={{ secrets['users'][ domain.split(".")[0] ]['hashed_pass'] | replace('$','$$') }}
+    environment:
+      - GRANT_SUDO=no
+      - RESTARTABLE=yes
+      - CHOWN_HOME=yes
+    networks:
+      - web
+    volumes:
+      - "{{ data_dir.path }}:/home/jovyan/work"
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.{{ role_name }}_{{ domain.split(".")[0] }}.rule=Host(`{{ domain }}`)
+      - traefik.http.routers.{{ role_name }}_{{ domain.split(".")[0] }}.entrypoints=https
+      - traefik.http.routers.{{ role_name }}_{{ domain.split(".")[0] }}.tls=true
+      - traefik.http.routers.{{ role_name }}_{{ domain.split(".")[0] }}.tls.certresolver=letsencrypt
+      - traefik.http.services.{{ role_name }}_{{ domain.split(".")[0] }}.loadbalancer.server.port=8888
+      - com.centurylinklabs.watchtower.enable=true
+
+networks:
+  web:
+    external:
+      name: traefik_web

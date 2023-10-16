@@ -1,0 +1,29 @@
+---
+- hosts: servers
+  become: true
+  roles:
+    - { role: load_secrets, tags: [always] }
+    - { role: base, tags: [base] }
+    - { role: docker, tags: [docker] }
+    - {
+        role: user,
+        tags: [user],
+        vars:
+          {
+            username: "gueldi",
+            shell: "/bin/zsh",
+            ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkN6Gh946RDixD57F0DVCKDSWTgJWIdW5YXbokMXuwi lukas@Lukass-MBP",
+            github_username: "gueldenstone",
+          },
+      }
+    - { role: traefik, tags: [traefik] }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "metis.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "adrastea.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "amalthea.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "thebe.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "ganymede.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "callisto.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "themisto.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "leda.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "ersa.alpakabook.de" } }
+    - { role: jupyter, tags: [jupyter], vars: { domain: "himalia.alpakabook.de" } }

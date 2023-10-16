@@ -1,13 +1,13 @@
 ---
 - name: "Create dir for docker file"
   file:
-    path: "{{ docker_compose_root }}/{{ role_name }}"
+    path: '{{ docker_compose_root }}/{{ role_name }}/{{ domain.split(".")[0] }}'
     state: directory
   register: docker_dir
 
 - name: "Create store dir"
   file:
-    path: "{{ storage_root }}/{{ role_name }}"
+    path: '{{ storage_root }}/{{ role_name }}/{{ domain.split(".")[0] }}'
     state: directory
   register: store_dir
 

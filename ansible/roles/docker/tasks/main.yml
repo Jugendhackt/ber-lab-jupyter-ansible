@@ -36,12 +36,6 @@
     src: daemon.json
     dest: /etc/docker/daemon.json
 
-- name: adding existing user '{{ ansible_user }}' to group docker
-  user:
-    name: '{{ ansible_user }}'
-    groups: docker
-    append: yes
-
 - name: Start docker and make sure docker is not autostarted
   systemd:
     name: "{{ item }}"
@@ -51,5 +45,3 @@
     - docker.service
     - docker.socket
   tags: boot
-
-
