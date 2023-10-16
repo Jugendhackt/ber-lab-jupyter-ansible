@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-HOSTS=$(tail -24 hosts | awk -F'.' '{ print $1 }')
+HOSTS=$(tail -10 hosts | awk -F'.' '{ print $1 }')
 SECRETS_FILE=secrets.yml
 
 # clear users field
