@@ -34,7 +34,7 @@ module "host" {
   count             = 1
   name              = "pluto"
   volume_size       = 0
-  server_type       = "cx21"
+  server_type       = "cpx41"
   keep_disk         = false
   delete_protection = true
   network_id        = hcloud_network.internal.id
