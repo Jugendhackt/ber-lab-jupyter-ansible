@@ -16,6 +16,16 @@
             github_username: "gueldenstone",
           },
       }
+    - {
+        role: user,
+        tags: [user_paddy],
+        vars:
+          {
+            username: "0pss",
+            shell: "/bin/bash",
+            ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAoaoTZuQW1Au+cb2QG2E9BPc1ChcqEPIMwShJv8yomm github@patrick-stecher.de",
+          },
+      }
     - { role: traefik, tags: [traefik] }
     - { role: jupyter, tags: [jupyter], vars: { domain: "metis.alpakabook.de" } }
     - { role: jupyter, tags: [jupyter], vars: { domain: "adrastea.alpakabook.de" } }
@@ -27,3 +37,4 @@
     - { role: jupyter, tags: [jupyter], vars: { domain: "leda.alpakabook.de" } }
     - { role: jupyter, tags: [jupyter], vars: { domain: "ersa.alpakabook.de" } }
     - { role: jupyter, tags: [jupyter], vars: { domain: "himalia.alpakabook.de" } }
+    - { role: alpakabook, tags: [alpakabook], vars: { domain: "alpakabook.de" } }
