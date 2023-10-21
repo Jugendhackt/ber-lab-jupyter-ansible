@@ -23,6 +23,7 @@ locals {
     "008" = { subdomain = "leda" }
     "009" = { subdomain = "ersa" }
     "010" = { subdomain = "himalia" }
+    "011" = { subdomain = "monitoring" }
   }
 }
 

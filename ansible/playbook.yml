@@ -38,3 +38,5 @@
     - { role: jupyter, tags: [jupyter], vars: { domain: "ersa.alpakabook.de" } }
     - { role: jupyter, tags: [jupyter], vars: { domain: "himalia.alpakabook.de" } }
     - { role: alpakabook, tags: [alpakabook], vars: { domain: "alpakabook.de" } }
+    - { role: watchtower, tags: [watchtower] }
+    - { role: monitoring, tags: [monitoring], vars: { domain: "monitoring.alpakabook.de" } }

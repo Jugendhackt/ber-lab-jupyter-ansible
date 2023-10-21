@@ -1,0 +1,6 @@
+GF_SECURITY_ADMIN_USER={{ secrets['grafana']['admin']['user'] }}
+GF_SECURITY_ADMIN_PASSWORD={{ secrets['grafana']['admin']['pass'] }}
+GF_USERS_ALLOW_SIGN_UP=false
+GF_AUTH_BASIC_ENABLED=false
+GF_SERVER_DOMAIN={{ domain }}
+GF_SERVER_ROOT_URL=https://{{ domain }}

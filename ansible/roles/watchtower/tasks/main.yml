@@ -1,0 +1,20 @@
+---
+- name: "Create dir for docker file"
+  file:
+    path: "{{ docker_compose_root }}/watchtower"
+    state: directory
+  register: docker_dir
+
+- name: "Render docker-compose"
+  template:
+    src: docker-compose.yml
+    dest: "{{ docker_dir.path }}/docker-compose.yml"
+    mode: 0644
+  register: render
+
+- name: "start docker service"
+  community.docker.docker_compose:
+    project_src: "{{ docker_dir.path }}"
+    pull: yes
+    state: present
+    restarted: "{{ copy is defined and copy.changed or render is defined and render.changed }}"

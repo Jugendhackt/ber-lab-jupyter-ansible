@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - web
+    environment:
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=pushover://:{{ secrets['watchtower']['pushover']['token'] }}@{{ secrets['watchtower']['pushover']['user'] }}/
+      - WATCHTOWER_NOTIFICATIONS_HOSTNAME={{ inventory_hostname_short }}
+    command: >          
+      --label-enable
+      --no-startup-message
+      --schedule "0 0 9 * * *"
+      --stop-timeout 120s             
+      --cleanup             
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      
+  
+networks:
+  web:
+    external:
+      name: traefik_web

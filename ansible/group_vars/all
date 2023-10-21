@@ -2,3 +2,75 @@ storage_root: /storage
 docker_compose_root: /docker-compose
 
 deb_architecture: { "aarch64": "arm64", "x86_64": "amd64" }
+
+scrape_configs:
+  - job_name: "prometheus"
+    targets:
+      - host: "localhost:9090"
+        hostname: "birch"
+
+  - job_name: "cadvisor"
+    targets:
+      - host: "cadvisor:8080"
+        hostname: "pluto"
+
+  - job_name: "node-exporter"
+    targets:
+      - host: "node-exporter:9100"
+        hostname: "pluto"
+
+  - job_name: "traefik"
+    targets:
+      - host: "traefik:8080"
+        hostname: "pluto"
+
+  - job_name: "adrastea"
+    targets:
+      - host: "adrastea"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "amalthea"
+    targets:
+      - host: "amalthea"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "callisto"
+    targets:
+      - host: "callisto"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "ersa"
+    targets:
+      - host: "ersa"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "ganymede"
+    targets:
+      - host: "ganymede"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "himalia"
+    targets:
+      - host: "himalia"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "leda"
+    targets:
+      - host: "leda"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "metis"
+    targets:
+      - host: "metis"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "thebe"
+    targets:
+      - host: "thebe"
+        hostname: "pluto"
+        metrics_path: "/metrics"
+  - job_name: "themisto"
+    targets:
+      - host: "themisto"
+        hostname: "pluto"
+        metrics_path: "/metrics"

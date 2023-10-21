@@ -1,0 +1,79 @@
+---
+- name: " Create dir for docker file"
+  file:
+    path: "{{ docker_compose_root }}/monitoring"
+    state: directory
+  register: docker_dir
+
+- name: "Create store dir"
+  file:
+    path: "{{ storage_root }}/monitoring"
+    state: directory
+  register: store_dir
+
+- name: "Create prometheus store dir (and set 65534 as the owner)"
+  file:
+    path: "{{ store_dir.path }}/prometheus"
+    state: directory
+    owner: "65534"
+  register: prometheus_dir
+
+- name: "Create prometheus config dir"
+  file:
+    path: "{{ docker_dir.path }}/prometheus"
+    state: directory
+
+- name: "Create grafana store dir (and set 472 as the owner)"
+  file:
+    path: "{{ store_dir.path }}/grafana"
+    state: directory
+    owner: "472"
+  register: grafana_dir
+
+- name: "Create loki store dir"
+  file:
+    path: "{{ store_dir.path }}/loki"
+    state: directory
+    owner: "10001"
+    group: "10001"
+  register: loki_dir
+
+- name: "Sync files for docker_compose"
+  synchronize:
+    src: .
+    dest: "{{ docker_dir.path }}/"
+    rsync_opts:
+      - "--delete"
+      - "--exclude=docker-compose.yml"
+      - "--exclude=prometheus.yml"
+      - "--exclude=prometheus"
+      - "--exclude=config.monitoring"
+  register: sync
+
+- name: "Render docker-compose"
+  template:
+    src: docker-compose.yml
+    dest: "{{ docker_dir.path }}/docker-compose.yml"
+    mode: 0644
+  register: render
+
+- name: "Render prometheus.yml"
+  template:
+    src: prometheus.yml
+    dest: "{{ docker_dir.path }}/prometheus/prometheus.yml"
+    mode: 0644
+  register: render2
+
+- name: "Render config env"
+  template:
+    src: config.monitoring
+    dest: "{{ docker_dir.path }}/grafana/config.monitoring"
+    mode: 0644
+  register: render3
+
+- name: "start docker service"
+  community.docker.docker_compose:
+    project_src: "{{ docker_dir.path }}"
+    pull: true
+    state: present
+    restarted: "{{ sync.changed or render.changed  or render2.changed or render3.changed }}"
