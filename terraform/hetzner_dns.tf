@@ -1,48 +1,43 @@
-variable "hetznerdns_token" {}
+variable "hcloud_dns_token" {}
+
+variable "notebooks" {}
+
+variable "name" {}
 
 
 provider "hetznerdns" {
-  apitoken = var.hetznerdns_token
+  apitoken = var.hcloud_dns_token
 }
 
 locals {
   ttl = 300
 }
 
-/* ------------------------------- gueldi.dev ------------------------------- */
-
-locals {
-  alpakabook_de_cnames = {
-    "001" = { subdomain = "metis" }
-    "002" = { subdomain = "adrastea" }
-    "003" = { subdomain = "amalthea" }
-    "004" = { subdomain = "thebe" }
-    "005" = { subdomain = "ganymede" }
-    "006" = { subdomain = "callisto" }
-    "007" = { subdomain = "themisto" }
-    "008" = { subdomain = "leda" }
-    "009" = { subdomain = "ersa" }
-    "010" = { subdomain = "himalia" }
-    "011" = { subdomain = "monitoring" }
-  }
-}
-
 # module
-module "dns_alpakabook_de" {
+module "dns_zone" {
   source = "./modules/hetzner_dns_zone"
-  domain = "alpakabook.de"
+  domain = var.domain
 
   ipv4 = module.host[0].attributes.public_ipv4
   ipv6 = module.host[0].attributes.public_ipv6
 }
 
 # cnames
-resource "hetznerdns_record" "alpakabook_de_cname" {
-  for_each = local.alpakabook_de_cnames
+resource "hetznerdns_record" "cnames" {
+  for_each = { for num in flatten(var.notebooks[*]) : num => num }
 
-  zone_id = module.dns_alpakabook_de.zone_id
-  name    = each.value.subdomain
-  value   = "alpakabook.de."
+  zone_id = module.dns_zone.zone_id
+  name    = each.value
+  value   = "${var.domain}."
+  type    = "CNAME"
+  ttl     = local.ttl
+}
+
+resource "hetznerdns_record" "main_cnames" {
+
+  zone_id = module.dns_zone.zone_id
+  name    = var.name
+  value   = "${var.domain}."
   type    = "CNAME"
   ttl     = local.ttl
 }

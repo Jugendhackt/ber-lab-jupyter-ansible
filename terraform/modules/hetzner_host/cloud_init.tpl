@@ -5,7 +5,7 @@ packages:
   - python3
 
 users:
-  - name: gueldi
+  - name: alpaca
     ssh-authorized-keys:
       - ${ssh_key}
     sudo: ALL=(ALL) NOPASSWD:ALL

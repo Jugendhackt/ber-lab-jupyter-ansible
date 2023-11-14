@@ -1,42 +1,34 @@
 ---
 - hosts: servers
   become: true
+  vars_files:
+    - config.yaml
+  tasks:
+    - {
+        name: configure admins,
+        include_role: { name: user },
+        loop: "{{ admins }}",
+        vars:
+          {
+            username: "{{ item.user_name }}",
+            shell: "{{ item.shell }}",
+            ssh_key: "{{ item.ssh_key }}",
+          },
+        tags: [user],
+      }
+    - {
+        name: configure notebooks,
+        loop: "{{ notebooks }}",
+        include_role: { name: jupyter },
+        vars:
+          {
+            domain: "{{ item.subdomain }}.{{ main_domain }}",
+            hashed_pass: "{{ item.hashed_pass}}",
+          },
+        tags: [jupyter],
+      }
+
   roles:
-    - { role: load_secrets, tags: [always] }
     - { role: base, tags: [base] }
     - { role: docker, tags: [docker] }
-    - {
-        role: user,
-        tags: [user],
-        vars:
-          {
-            username: "gueldi",
-            shell: "/bin/zsh",
-            ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkN6Gh946RDixD57F0DVCKDSWTgJWIdW5YXbokMXuwi lukas@Lukass-MBP",
-            github_username: "gueldenstone",
-          },
-      }
-    - {
-        role: user,
-        tags: [user_paddy],
-        vars:
-          {
-            username: "0pss",
-            shell: "/bin/bash",
-            ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAoaoTZuQW1Au+cb2QG2E9BPc1ChcqEPIMwShJv8yomm github@patrick-stecher.de",
-          },
-      }
     - { role: traefik, tags: [traefik] }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "metis.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "adrastea.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "amalthea.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "thebe.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "ganymede.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "callisto.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "themisto.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "leda.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "ersa.alpakabook.de" } }
-    - { role: jupyter, tags: [jupyter], vars: { domain: "himalia.alpakabook.de" } }
-    - { role: alpakabook, tags: [alpakabook], vars: { domain: "alpakabook.de" } }
-    - { role: watchtower, tags: [watchtower] }
-    - { role: monitoring, tags: [monitoring], vars: { domain: "monitoring.alpakabook.de" } }

@@ -1,4 +1,4 @@
-*.pdf
-*.log
-*.aux
-.ssh/*
+ansible/config.yaml
+ansible/hosts
+terraform/config.tfvars.json
+config.yaml

@@ -1,6 +1,9 @@
 variable "hcloud_token" {
 }
 
+variable "domain" {
+}
+
 provider "hcloud" {
   token = var.hcloud_token
 }
@@ -11,7 +14,7 @@ locals {
 
   internal_ips = {
     # production
-    "pluto" = "10.0.0.2"
+    var.name = "10.0.0.2"
   }
 }
 
@@ -32,14 +35,12 @@ resource "hcloud_network_subnet" "servers" {
 module "host" {
   source            = "./modules/hetzner_host"
   count             = 1
-  name              = "pluto"
-  volume_size       = 0
+  name              = var.name
   server_type       = "cpx41"
-  keep_disk         = false
   delete_protection = true
   network_id        = hcloud_network.internal.id
   internal_ips      = local.internal_ips
-  dns_zone_ids      = module.dns_alpakabook_de.zone_id
+  dns_zone_ids      = module.dns_zone.zone_id
 }
 
 # Output

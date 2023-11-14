@@ -1,5 +1,0 @@
----
-- name: Load secrets to environment
-  community.sops.load_vars:
-    file: secrets.yml
-    name: secrets
