@@ -6,7 +6,7 @@
   tasks:
     - {
         name: configure admins,
-        include_role: { name: user },
+        include_role: { name: "user" },
         loop: "{{ admins }}",
         vars:
           {
@@ -15,6 +15,7 @@
             ssh_key: "{{ item.ssh_key }}",
           },
         tags: [user],
+        loop_control: { loop_var: item },
       }
     - {
         name: configure notebooks,

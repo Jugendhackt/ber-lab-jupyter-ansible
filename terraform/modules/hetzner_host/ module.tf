@@ -18,9 +18,6 @@ variable "delete_protection" {
   type    = bool
   default = false
 }
-variable "dns_zone_ids" {
-  type = string
-}
 variable "ttl" {
   type    = number
   default = 300
@@ -120,39 +117,6 @@ resource "hcloud_server" "server" {
       image
     ]
   }
-}
-
-# DNS
-resource "hetznerdns_record" "ipv4" {
-  zone_id = var.dns_zone_ids
-  name    = var.name
-  value   = hcloud_server.server.ipv4_address
-  type    = "A"
-  ttl     = var.ttl
-}
-
-resource "hetznerdns_record" "ipv6" {
-  zone_id = var.dns_zone_ids
-  name    = var.name
-  value   = hcloud_server.server.ipv6_address
-  type    = "AAAA"
-  ttl     = var.ttl
-}
-
-resource "hetznerdns_record" "ipv4_w" {
-  zone_id = var.dns_zone_ids
-  name    = "*.${var.name}"
-  value   = hcloud_server.server.ipv4_address
-  type    = "A"
-  ttl     = var.ttl
-}
-
-resource "hetznerdns_record" "ipv6_w" {
-  zone_id = var.dns_zone_ids
-  name    = "*.${var.name}"
-  value   = hcloud_server.server.ipv6_address
-  type    = "AAAA"
-  ttl     = var.ttl
 }
 
 

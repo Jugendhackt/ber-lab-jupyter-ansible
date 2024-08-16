@@ -4,6 +4,11 @@ variable "hcloud_token" {
 variable "domain" {
 }
 
+variable "name" {
+
+}
+
+
 provider "hcloud" {
   token = var.hcloud_token
 }
@@ -14,7 +19,7 @@ locals {
 
   internal_ips = {
     # production
-    var.name = "10.0.0.2"
+    (var.name) = "10.0.0.2"
   }
 }
 
@@ -40,7 +45,6 @@ module "host" {
   delete_protection = true
   network_id        = hcloud_network.internal.id
   internal_ips      = local.internal_ips
-  dns_zone_ids      = module.dns_zone.zone_id
 }
 
 # Output

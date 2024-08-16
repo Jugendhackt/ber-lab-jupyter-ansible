@@ -1,17 +1,20 @@
 ---
 - name: "Create dir for docker file"
+  tags: jupyter
   file:
     path: '{{ docker_compose_root }}/{{ role_name }}/{{ domain.split(".")[0] }}'
     state: directory
   register: docker_dir
 
 - name: "Create store dir"
+  tags: jupyter
   file:
     path: '{{ storage_root }}/{{ role_name }}/{{ domain.split(".")[0] }}'
     state: directory
   register: store_dir
 
 - name: "Create data dir"
+  tags: jupyter
   file:
     path: "{{ store_dir.path }}/data"
     state: directory
@@ -20,6 +23,7 @@
   register: data_dir
 
 - name: "Render docker-compose"
+  tags: jupyter
   template:
     src: docker-compose.yml
     dest: "{{ docker_dir.path }}/docker-compose.yml"
@@ -27,8 +31,9 @@
   register: docker
 
 - name: "start docker service"
-  community.docker.docker_compose:
+  tags: [jupyter, update]
+  community.docker.docker_compose_v2:
     project_src: "{{ docker_dir.path }}"
-    pull: yes
+    remove_orphans: true
+    pull: always
     state: present
-    restarted: "{{ docker.changed }}"

@@ -1,8 +1,9 @@
 ---
 - name: Create user {{ username }}
+  tags: user
   user:
     name: "{{ username }}"
-    shell: "{{ shell }}"
+    shell: "/bin/zsh"
     generate_ssh_key: true
     append: true
     groups:
@@ -10,23 +11,8 @@
       - admin
 
 - name: Set authorized keys
+  tags: user
   ansible.posix.authorized_key:
     user: "{{ username }}"
     state: present
     key: "{{ ssh_key }}"
-# - name: Download and setup chezmoi
-#   become: true
-#   become_user: "{{ username }}"
-#   ansible.builtin.shell: /bin/sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply {{ github_username }}
-
-# - name: Download antigen
-#   become: true
-#   become_user: "{{ username }}"
-#   ansible.builtin.shell: curl -L git.io/antigen > antigen.zsh
-
-# - name: "Write ZDOTDIR"
-#   copy:
-#     content: "ZDOTDIR=$HOME/.zsh"
-#     dest: "$HOME/.zshenv"
-#   become: true
-#   become_user: "{{ username }}"

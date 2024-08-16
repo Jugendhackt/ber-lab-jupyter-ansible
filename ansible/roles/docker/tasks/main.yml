@@ -21,6 +21,7 @@
       - python3-pip
       - python3-setuptools
       - python3-dev
+      - docker-compose-plugin
 
 - name: Install python packages
   pip:
@@ -29,7 +30,6 @@
   loop:
     - wheel
     - docker
-    - docker-compose
 
 - name: Render daemon.json
   template:

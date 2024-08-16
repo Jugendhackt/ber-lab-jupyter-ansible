@@ -43,8 +43,9 @@
     force: no
 
 - name: start docker service
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ docker_dir.path }}"
-    pull: yes
-    restarted: "{{ render is defined and render.changed }}"
+    remove_orphans: true
+    pull: always
+    state: present
   tags: update
