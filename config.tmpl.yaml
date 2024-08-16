@@ -1,5 +1,4 @@
 hcloud_token: <my hetzner cloud token>
-hcloud_dns_token: <my hetzner dns token>
 domain: <my domain>
 hostname: jupyter
 admins:
