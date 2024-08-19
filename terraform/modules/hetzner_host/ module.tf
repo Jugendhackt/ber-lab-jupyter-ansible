@@ -1,4 +1,5 @@
 variable "name" { type = string }
+variable "ssh_key_location" { type = string }
 variable "server_type" { type = string }
 variable "network_id" { type = string }
 variable "internal_ips" { type = map(any) }
@@ -99,7 +100,7 @@ resource "hcloud_server" "server" {
   image              = "debian-11"
   server_type        = var.server_type
   location           = "nbg1"
-  user_data          = templatefile("${path.module}/cloud_init.tpl", { ssh_key = file("~/.ssh/id_ed25519.pub") })
+  user_data          = templatefile("${path.module}/cloud_init.tpl", { ssh_key = file(${ssh_key_location}) })
   firewall_ids       = [hcloud_firewall.firewall.id]
   backups            = false
   keep_disk          = false
@@ -130,4 +131,3 @@ output "attributes" {
     "hostname" = var.name
   })
 }
-

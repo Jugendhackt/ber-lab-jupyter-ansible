@@ -5,7 +5,10 @@ variable "domain" {
 }
 
 variable "name" {
+}
 
+variable "ssh_key_location" {
+  
 }
 
 
@@ -45,13 +48,10 @@ module "host" {
   delete_protection = true
   network_id        = hcloud_network.internal.id
   internal_ips      = local.internal_ips
+  ssh_key_location  = var.ssh_key_location
 }
 
 # Output
 output "servers" {
   value = { for a in module.host.*.attributes : a.hostname => a }
 }
-
-
-
-

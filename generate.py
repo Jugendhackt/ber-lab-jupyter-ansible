@@ -41,12 +41,11 @@ def main():
 
     # Write to json file for terraform
     with open('terraform/config.tfvars.json','w') as file:
-        subdomains = [f'{entry["subdomain"]}' for entry in host_infos]
         tf_config = {
             'domain': config["domain"],
-            'notebooks': subdomains, 
             'hcloud_token': config["hcloud_token"], 
-            'name': config["hostname"]
+            'name': config["hostname"],
+            'ssh_key_location': config["ssh_key_location"]
             }
         json.dump(tf_config, file, indent=2, sort_keys=False)
 
