@@ -21,7 +21,7 @@ services:
       - --log.level=WARN
 
       # letsencrypt/acme
-      - --certificatesResolvers.letsencrypt.acme.email=letsencrypt@lukasgueldenstein.de
+      - --certificatesResolvers.letsencrypt.acme.email={{ acme_email }}
       - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
 
       # tls

@@ -46,7 +46,8 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
 3. Replace the placeholder for `domain` with your domain name like `alpacabook.de`.
 4. Choose a hostname. This will be the subdomain your server will be reachable by. This could just be `jupyter` for example. So the server will be reachable using `jupyter.alpacabook.de` and the jupyter notebooks will be reachable under `00[1,2,3...].jupyter.alpacabook.de`
 5. Add the location of your public key into `ssh_key_location` like `~/.ssh/id_ed25519`. This will be the key used to access the server initially.
-6. Fill the `admins` array. These will be the accounts that will be created on the server. Use your the public part of your ssh-key from above or any other ssh-key from your friends who want to access this server. Regarding the shell: if you know, you know otherwise just leave it as is.
+6. Add an email for the `email` field under which you will get your certificates from [Letsencrypt](https://letsencrypt.org/)
+7. Fill the `admins` array. These will be the accounts that will be created on the server. Use your the public part of your ssh-key from above or any other ssh-key from your friends who want to access this server. Regarding the shell: if you know, you know otherwise just leave it as is.
 
 ### Step 3: Setup
 
@@ -85,6 +86,7 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
 2. add `A` and `AAAA` records for `*.hostname` and `hostname`
 3. the `A`records take the IPv4 address
 4. the `AAAA`records take the IPv6 address 
+5. verify that the records are published using `nslookup` or `dig`
 
 ### Step 5: Deploy the docker containers using Ansible
 
@@ -94,12 +96,15 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
    make a_run
    ```
 
+   This might take a while.
+
 2. in case any step fails, use tags in `ansible/playbook.yaml` to run single steps
+3. to debug you can access the server via `ssh -i ~/.ssh/private_ssh_key <admin_user>@<hostname>.<domain>`
 
 ### Step 6: extract passwords and domain names
 
 1. go to `ansible/config.yaml`
-2. get urls and passwords 
+2. get urls and passwords
 
 ### Step 7: Use jupyter notebooks
 

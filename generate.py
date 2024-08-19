@@ -36,6 +36,7 @@ def main():
             'main_domain': config["domain"],
             'notebooks': host_infos,
             'admins': config["admins"],
+            'acme_email': config["email"]
             }
         yaml.dump(ansible_cfg, file, indent=2, default_style="'", default_flow_style=False, sort_keys=False)
 

@@ -2,6 +2,7 @@ hcloud_token: <my hetzner cloud token>
 domain: <my domain>
 hostname: jupyter
 ssh_key_location: ~/.ssh/id_ed25519.pub
+email: <my@provider.com>
 admins:
   - user_name: <my_username>
     ssh_key: <ssh_key>
