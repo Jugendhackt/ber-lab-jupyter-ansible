@@ -100,7 +100,7 @@ resource "hcloud_server" "server" {
   image              = "debian-11"
   server_type        = var.server_type
   location           = "nbg1"
-  user_data          = templatefile("${path.module}/cloud_init.tpl", { ssh_key = file(${ssh_key_location}) })
+  user_data          = templatefile("${path.module}/cloud_init.tpl", { ssh_key = file(var.ssh_key_location) })
   firewall_ids       = [hcloud_firewall.firewall.id]
   backups            = false
   keep_disk          = false
