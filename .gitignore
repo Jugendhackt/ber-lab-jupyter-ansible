@@ -3,3 +3,5 @@ ansible/hosts
 terraform/config.tfvars.json
 config.yaml
 env/
+terraform/*.lock.hcl
+terraform/terraform.tfstate.d/
