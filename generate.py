@@ -1,4 +1,4 @@
-import yaml, toml, json, argparse
+import yaml, json, argparse, os
 from jupyter_server.auth.security import passwd
 from pwgen import pwgen
 
@@ -50,10 +50,11 @@ def main():
         json.dump(tf_config, file, indent=2, sort_keys=False)
 
     with open('ansible/hosts','w') as file:
+        private_key_file = os.path.splitext(config["ssh_key_location"])[0]
         ansible_hosts_data = {
             'servers': {
                 'hosts': {
-                    f'{config["hostname"]}.{config["domain"]}': {'ansible_user': 'alpaca'}
+                    f'{config["hostname"]}.{config["domain"]}': {'ansible_user': 'alpaca', 'ansible_ssh_private_key_file': private_key_file}
                 }
             }
         }

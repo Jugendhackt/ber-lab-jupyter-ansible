@@ -45,7 +45,8 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
 2. Replace the placeholder for `hcloud_token` with your token from Hetzner Cloud.
 3. Replace the placeholder for `domain` with your domain name like `alpacabook.de`.
 4. Choose a hostname. This will be the subdomain your server will be reachable by. This could just be `jupyter` for example. So the server will be reachable using `jupyter.alpacabook.de` and the jupyter notebooks will be reachable under `00[1,2,3...].jupyter.alpacabook.de`
-5. Fill the `admins` array. These will be the accounts that will be created on the server. Use your the public part of your ssh-key from above or any other ssh-key from your friends who want to access this server. Regarding the shell: if you know, you know otherwise just leave it as is.
+5. Add the location of your public key into `ssh_key_location` like `~/.ssh/id_ed25519`. This will be the key used to access the server initially.
+6. Fill the `admins` array. These will be the accounts that will be created on the server. Use your the public part of your ssh-key from above or any other ssh-key from your friends who want to access this server. Regarding the shell: if you know, you know otherwise just leave it as is.
 
 ### Step 3: Setup
 
