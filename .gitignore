@@ -5,3 +5,4 @@ config.yaml
 env/
 terraform/*.lock.hcl
 terraform/terraform.tfstate.d/
+terraform/terraform.tfstate.d.*/

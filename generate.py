@@ -17,7 +17,7 @@ def create_hosts_info(n, config):
             'hashed_pass': hashed_pw,
         }
         hosts_infos.append(hosts_infos_entry)
-    
+
     return hosts_infos
 
 
@@ -28,7 +28,7 @@ def main():
     args = parser.parse_args()
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
-        
+
     host_infos = create_hosts_info(args.num, config)
     # Write to YAML file for ansible
     with open('ansible/config.yaml', 'w') as file:
@@ -44,7 +44,7 @@ def main():
     with open('terraform/config.tfvars.json','w') as file:
         tf_config = {
             'domain': config["domain"],
-            'hcloud_token': config["hcloud_token"], 
+            'hcloud_token': config["hcloud_token"],
             'name': config["hostname"],
             'ssh_key_location': config["ssh_key_location"]
             }
