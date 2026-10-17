@@ -97,7 +97,7 @@ resource "hcloud_firewall" "firewall" {
 # Server
 resource "hcloud_server" "server" {
   name               = var.name
-  image              = "debian-11"
+  image              = "debian-12"
   server_type        = var.server_type
   location           = "nbg1"
   user_data          = templatefile("${path.module}/cloud_init.tpl", { ssh_key = file(var.ssh_key_location) })

@@ -7,11 +7,11 @@
   - [Step 2: Create a new configuration file.](#step-2-create-a-new-configuration-file)
   - [Step 3: Setup](#step-3-setup)
   - [Step 4: Create your Hetzner Cloud instance](#step-4-create-your-hetzner-cloud-instance)
-  - [Step 4: Add IP Adresses to DNS records of your domain](#step-4-add-ip-adresses-to-dns-records-of-your-domain)
-  - [Step 5: Deploy the docker containers using Ansible](#step-5-deploy-the-docker-containers-using-ansible)
-  - [Step 6: extract passwords and domain names](#step-6-extract-passwords-and-domain-names)
-  - [Step 7: Use jupyter notebooks](#step-7-use-jupyter-notebooks)
-  - [Step 8: (later) destroy server](#step-8-later-destroy-server)
+  - [Step 5: Add IP addresses to DNS records of your domain](#step-5-add-ip-addresses-to-dns-records-of-your-domain)
+  - [Step 6: Deploy the docker containers using Ansible](#step-6-deploy-the-docker-containers-using-ansible)
+  - [Step 7: extract passwords and domain names](#step-7-extract-passwords-and-domain-names)
+  - [Step 8: Use jupyter notebooks](#step-8-use-jupyter-notebooks)
+  - [Step 9: (later) destroy server](#step-9-later-destroy-server)
 
 ## Foreword
 
@@ -29,7 +29,7 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
 - A [Hetzner Cloud](https://www.hetzner.com/cloud/) account.
 - [Python](https://www.python.org/about/gettingstarted/)
 - [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-- [Ansible](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## Setup
 
@@ -64,15 +64,32 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
    ```
 
 ### Step 4: Create your Hetzner Cloud instance
-1. run terraform
+1. initialize terraform
 
    ```
-   make tf_init && make tf_plan
+   make tf_init
    ```
 
-   Verify that the settings shown in this plan is what you are expecting.
+2. (optional) check the plan before creating anything
 
-2. apply terraform
+   ```
+   make tf_plan
+   ```
+
+   This shows what terraform would create without creating anything, so you can safely run it after every change to `config.yaml` or the terraform files. Verify that the settings shown in this plan are what you are expecting. On a fresh deployment every resource should show as `+ create` and the plan should end with `0 to change, 0 to destroy`. If it wants to change or destroy something, a server or state from an earlier deployment is probably still around (see [Step 9](#step-9-later-destroy-server)).
+
+   If `make tf_apply` fails with `name is already used`, the network or firewall from an earlier deployment still exists in your Hetzner project. Either delete them in the Hetzner Cloud Console, or import them into the terraform state (IDs are shown in the console):
+
+   ```
+   cd terraform
+   terraform import --var-file=config.tfvars.json hcloud_network.internal <network_id>
+   terraform import --var-file=config.tfvars.json hcloud_network_subnet.servers <network_id>-10.0.0.0/24
+   terraform import --var-file=config.tfvars.json 'module.host[0].hcloud_firewall.firewall' <firewall_id>
+   ```
+
+   Note: the plan does not check whether Hetzner still offers the chosen server type or image in your location. If `make tf_apply` fails with `unsupported location for server type`, pick a current type in `terraform/hetzner.tf` (`server_type`, currently `cpx42`: 8 vCPU, 16 GB RAM). Current types are listed at https://www.hetzner.com/cloud/.
+
+3. apply terraform
 
    ```
    make tf_apply
@@ -80,15 +97,15 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
 
    this will print the public IPv4 and IPv6 addresses
 
-### Step 4: Add IP Adresses to DNS records of your domain
+### Step 5: Add IP addresses to DNS records of your domain
 
 1. navigate to your registrar find your chosen domain's DNS records 
 2. add `A` and `AAAA` records for `*.hostname` and `hostname`
 3. the `A`records take the IPv4 address
 4. the `AAAA`records take the IPv6 address 
-5. verify that the records are published using `nslookup` or `dig`
+5. verify that the records are published using `nslookup` or `dig`, e.g. `dig +short <hostname>.<domain>` must return the new IPv4 address. Wait for this before running Ansible, otherwise ssh may still reach the old IP from an earlier deployment.
 
-### Step 5: Deploy the docker containers using Ansible
+### Step 6: Deploy the docker containers using Ansible
 
 1. Run Ansible
 
@@ -98,20 +115,23 @@ It uses [traefik](https://traefik.io/traefik/) as a reverse proxy and [docker](h
 
    This might take a while.
 
-2. in case any step fails, use tags in `ansible/playbook.yaml` to run single steps
-3. to debug you can access the server via `ssh -i ~/.ssh/private_ssh_key <admin_user>@<hostname>.<domain>`
+2. If this fails with `REMOTE HOST IDENTIFICATION HAS CHANGED`, you already deployed to the same hostname before and `~/.ssh/known_hosts` still holds the old server's key. Remove it with `ssh-keygen -R <hostname>.<domain>` and run again.
+3. in case any step fails, use tags in `ansible/playbook.yml` to run single steps
+4. to debug you can access the server via `ssh -i ~/.ssh/private_ssh_key <admin_user>@<hostname>.<domain>`
 
-### Step 6: extract passwords and domain names
+### Step 7: extract passwords and domain names
 
 1. go to `ansible/config.yaml`
 2. get urls and passwords
 
-### Step 7: Use jupyter notebooks
+### Step 8: Use jupyter notebooks
 
 The jupyter notebooks can be reached under `001.<hostname>.<domain>` where `001` indicates the instance number.
 
-### Step 8: (later) destroy server
+### Step 9: (later) destroy server
 
 1. open your Hetzner Cloud Console 
 2. deactivate protection
 3. delete server
+4. also delete the network `production` and the firewall `<hostname>_firewall`. Otherwise the next `make tf_apply` fails with `name is already used`. Alternatively keep the terraform state in `terraform/terraform.tfstate.d/` and run `terraform destroy` from there instead.
+5. remove the old host key so the next deployment can connect: `ssh-keygen -R <hostname>.<domain>`
