@@ -3,7 +3,7 @@ version: "3.8"
 services:
   scipy-notebook:
     container_name: '{{ domain.split(".")[0] }}'
-    image: jupyter/scipy-notebook:latest
+    image: quay.io/jupyter/scipy-notebook:latest
     command:
       - jupyter
       - notebook

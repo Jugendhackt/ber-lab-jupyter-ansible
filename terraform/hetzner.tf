@@ -44,7 +44,7 @@ module "host" {
   source            = "./modules/hetzner_host"
   count             = 1
   name              = var.name
-  server_type       = "cpx41"
+  server_type       = "cpx42"
   delete_protection = true
   network_id        = hcloud_network.internal.id
   internal_ips      = local.internal_ips
